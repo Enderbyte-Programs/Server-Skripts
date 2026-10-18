@@ -1,14 +1,35 @@
 command /afk:
     trigger:
+        set {afk.lastmove::%uuid of player%} to now
+
         if player has permission "group.afk":
             execute console command "lp user %player% permission set group.afk false"
-            send "&c&l AFK >> &rYou are no longer &c&lAFK!" to player
+            send "&c&lAFK >> &rYou are no longer &c&lAFK!" to player
         else:
             execute console command "lp user %player% permission set group.afk true"
             send "&c&lAFK >> &rYou are now &c&lAFK!" to player
             send title "&c&lAFK" with subtitle "&7You are now &c&lAFK" to player for 3 seconds
 
+on join:
+    set {afk.lastmove::%uuid of player%} to now
+
+on quit:
+    delete {afk.lastmove::%uuid of player%}
+
 on player move:
+    set {afk.lastmove::%uuid of player%} to now
+
     if player has permission "group.afk":
         execute console command "lp user %player% permission set group.afk false"
         send "&c&lAFK >> &rYou have moved, your &lAFK &rstatus has been disabled." to player
+
+every 30 seconds:
+    loop all players:
+        if {afk.lastmove::%uuid of loop-player%} is not set:
+            set {afk.lastmove::%uuid of loop-player%} to now
+
+        if loop-player does not have permission "group.afk":
+            if difference between now and {afk.lastmove::%uuid of loop-player%} >= 10 minutes:
+                execute console command "lp user %loop-player% permission set group.afk true"
+                send "You are now &c&lAFK!" to loop-player
+                send title "&c&lAFK" with subtitle "&7You are now &c&lAFK" to loop-player for 3 seconds
