@@ -1,0 +1,11 @@
+command /getinvisibleitemframe:
+	permission: skript.giif
+	description: Get an invisible item frame
+	executable by: players
+	trigger:
+		if player has item_frame:
+			make console execute command "imageframe giveinvisibleframe regular 1 %player%"
+			remove 1 item_frame from player
+			message "&c You have been given an invisible item frame"
+		else:
+			message "&4 You must have an item frame to do this"

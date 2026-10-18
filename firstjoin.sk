@@ -1,0 +1,134 @@
+on first join:
+	set {joined::%player's uuid%} to false
+	broadcast "<#7CFC00>Welcome %player%!" 
+
+on world change:
+	if player's world is "survival":
+		set {_hasJoined} to true
+		if {joined::%player's uuid%} is not set:
+			set {_hasJoined} to false
+		if {joined::%player's uuid%} is false:
+			set {_hasJoined} to false
+		if {_hasJoined} is false:
+			if player's inventory is empty:
+				# First join - also decrease false-positives for players who have joined before
+				make player execute command "/resetonboarding"
+				
+				
+				#Set their home there by default
+				
+		
+		#Set to true
+		set {joined::%player's uuid%} to true
+
+#Suppress commands before 30 minutes playtime
+on command:
+	if sender is a player:
+		set {_timeplayedraw} to time played of player
+		set {_remaining} to difference between {_timeplayedraw} and 30 minutes
+		if {_timeplayedraw} < 5 seconds: 
+			# WAS 30 MINS FORMERLY
+			if command is "tpa" or "tpaccept" or "spawn" or "mvspawn" or "simpletpa:tpa" or "simpletpa:tpaccept" or "multiverse:mvspawn" or "multiverse:mv":
+			#TODO
+			
+			
+				
+				send "You must play for %{_remaining}% seconds before you can do this." to player
+				cancel event
+			if command is "survival":
+				if player's world is "survival":
+					send "You must play for %{_remaining}% seconds before you can do this." to player
+					cancel event
+
+command /resetonboarding:
+	trigger:
+		make player execute command "/rtp"
+		wait 2 seconds
+		send "" to player
+		play sound "minecraft.entity.player.levelup" to player
+		send formatted "&6Welcome to the server. In what language would you like to view instructions? / Bienvenue au serveur. Dans quelle langue voulez-vous voir les instructions?" to player
+		send formatted "<command:/survivalinfoen>&c&l[English]<reset> &6/ <command:/survivalinfofr>&b&l[Français]" to player
+		send "" to player 
+		#padding
+		make player execute command "/sethome"
+		set {_x} to floor(player's x-coordinate)
+		set {_y} to floor(player's y-coordinate)
+		set {_z} to floor(player's z-coordinate)
+		execute console command "execute in minecraft:survival run spawnpoint %player% %{_x}% %{_y}% %{_z}%"
+
+
+command /presurvivalinfoen:
+	trigger:
+		send_playerinfo_en(player,"Hello. You have been teleported randomly so that you can gather resources")
+		wait 5 seconds
+		send_playerinfo_en(player,"If you want to be closer to other players, run /spawn")
+		wait 2 seconds
+		make player execute command "/survivalinfoen"
+
+command /presurvivalinfofr:
+	trigger:
+		send_playerinfo_fr(player,"Bonjour. Vous êtes en un nouveau endroit ainsi vous pouvez predre des ressources.")
+		wait 5 seconds
+		send_playerinfo_fr(player,"Si vous voulez aller près aux autres joueurs, faire /spawn")
+		wait 2 seconds
+		make player execute command "/survivalinfofr"
+
+command /survivalinfoen:
+	trigger:
+		send_playerinfo_en(player,"Hello. Here is some information about the server")
+		wait 2 seconds
+		send_playerinfo_en(player,"If you want to go somewhere random, run /rtp")
+		wait 5 seconds
+		send_playerinfo_en(player,"To set your home, run /sethome. To go there, run /home")
+		wait 5 seconds
+		send_playerinfo_en(player,"To disable PVP, run /pvpoff. To enable it again, run /pvpon.")
+		wait 5 seconds
+		send_playerinfo_en(player,"To toggle keep inventory, run /ki")
+		wait 5 seconds
+		send_playerinfo_en(player,"Please be reminded that theft, griefing, and hacking are not permitted on this server.")
+		wait 5 seconds
+		send_playerinfo_en(player,"If you witness crime, please report it to an online staff member (M or A) or report it in the discord server, or run /report.")
+		wait 5 seconds
+		send_playerinfo_en(player,"For other inquiries, send a discord message to @enderbyte09 or email enderbyte09@gmail.com")
+		wait 5 seconds
+		send_playerinfo_en(player,"Join the discord server with /discord")
+		wait 5 seconds
+		send_playerinfo_en(player,"If you are looking for some work to do, ask in chat to find work")
+		wait 2 seconds
+		send_playerinfo_en(player,"Thank you for choosing to play on this server")
+
+command /survivalinfofr:
+	trigger:
+		send_playerinfo_fr(player,"Bonjour. Voici des renseignements du serveur.")
+		wait 2 seconds
+		send_playerinfo_fr(player,"Si vous voulez aller au nouveau endroit, faire /rtp")
+		wait 5 seconds
+		send_playerinfo_fr(player,"Faire /sethome à mettre votre maison. Faire /home à aller à la maison")
+		wait 5 seconds
+		send_playerinfo_fr(player,"À arrêter le 'PVP', faire /pvpoff. À recommencer, faire /pvpon.")
+		wait 5 seconds
+		send_playerinfo_fr(player,"À changer keepinventory, faire /ki")
+		wait 5 seconds
+		send_playerinfo_fr(player,"Il est interdit à voler, détruire les maisons des autres, et utiliser des modifications injuste.")
+		wait 5 seconds
+		send_playerinfo_fr(player,"Si vous voyez un délit, signaler aux moderateurs (M ou A) SVP, ou écrire un billet à Discord.")
+		wait 5 seconds
+		send_playerinfo_fr(player,"Pour l'aide supplémentaire, écrire à @enderbyte09 à Discord ou enderbyte09@gmail.com à email.")
+		wait 5 seconds
+		send_playerinfo_fr(player,"Parlez avec les autres membres du serveur: Faire /discord")
+		wait 5 seconds
+		send_playerinfo_fr(player,"Si vous voulez travailler, demandez \\a trouver le travail")
+		wait 2 seconds
+		send_playerinfo_fr(player,"Merci beaucoup pour avoir choisi à jouer sur ce serveur.")
+
+function send_playerinfo_en(p: player, m: text):
+	play sound "entity.villager.ambient" to {_p}
+	#set {_resolver} to resolver("name", {_m})
+	send "&6&l[Zoe] &r&6%{_m}%" to {_p}
+	#send {_msg} to {_p}
+
+function send_playerinfo_fr(p: player, m: text):
+	play sound "entity.villager.ambient" to {_p}
+	#set {_resolver} to resolver("name", {_m})
+	send "&6&l[Sylvain] &r&6%{_m}%" to {_p}
+	#send {_msg} to {_p}

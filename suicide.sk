@@ -1,0 +1,9 @@
+command /suicide:
+    permission: suicide.script
+    permission message: Hey you cant kill your self!, youre too young to decide that, check out life get a girlfriend we dont care!, just dont commit the nono cide.
+    description: if death is the only remaining option, then do this.
+    cooldown: 15 seconds
+    cooldown message: §4Please Wait 15 Seconds, cant be suicide squad out here
+    trigger:
+        kill player
+        message "It Was A Nice Life! or not... we never know why you did it!" to player

@@ -1,0 +1,23 @@
+on world change:
+	if player's world is "parkour":
+		if player does not have permission "group.parkourbuilder":
+			if player does not have permission "group.mod":
+				if player does not have permission "group.admin":
+					#send "marked for clear" to player
+					loop 27 times:
+						set slot (loop-value - 1) of player's ender chest to air
+					loop 41 times:
+						set {_index} to loop-number -1
+						set {_slot} to slot {_index} of player's inventory
+						if {_slot} is diamond:
+							set {_count} to item amount of {_slot}
+							give {_count} of yellow_glazed_terracotta named "Trophy (pre 2026-07)" to player
+							set slot {_index} of player's inventory to air
+						else:
+							if {_slot} is not yellow glazed terracotta:
+								if {_slot} is not air:
+									set slot {_index} of player's inventory to air
+									send "An unauthorized item was found in your inventory. It has been removed" to player
+									send "Unauthorized parkour items were stripped from %player%" to console
+
+							

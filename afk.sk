@@ -1,0 +1,14 @@
+command /afk:
+    trigger:
+        if player has permission "group.afk":
+            execute console command "lp user %player% permission set group.afk false"
+            send "&c&l AFK >> &rYou are no longer &c&lAFK!" to player
+        else:
+            execute console command "lp user %player% permission set group.afk true"
+            send "&c&lAFK >> &rYou are now &c&lAFK!" to player
+            send title "&c&lAFK" with subtitle "&7You are now &c&lAFK" to player for 3 seconds
+
+on player move:
+    if player has permission "group.afk":
+        execute console command "lp user %player% permission set group.afk false"
+        send "&c&lAFK >> &rYou have moved, your &lAFK &rstatus has been disabled." to player

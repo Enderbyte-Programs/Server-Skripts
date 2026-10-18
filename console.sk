@@ -1,0 +1,6 @@
+command /console <text>:
+    permission: skript.console
+    permission message: &cThis is for admins ONLY
+    trigger:
+        execute console command arg-1
+        send "<#7CFC00>Finished" to player

@@ -1,0 +1,35 @@
+command /playtime [<text>]:
+    aliases: pt
+    trigger:
+        if arg-1 is set:
+            set {_name} to arg-1
+            loop all players:
+                if name of loop-player is {_name}:
+                    set {_target} to loop-player
+                    stop loop
+        else:
+            set {_target} to player
+
+        if {_target} is not set:
+            send "&cPlayer not found."
+            stop
+
+        if {_target} has not played before:
+            send "&cThat player has never joined the server."
+            stop
+
+        set {_t} to time played of {_target}
+        set {_seconds} to difference between {_t} and 0 seconds
+
+        set {_hours} to floor({_seconds} / 3600)
+        set {_seconds} to {_seconds} - ({_hours} * 3600)
+
+        set {_minutes} to floor({_seconds} / 60)
+        set {_seconds} to {_seconds} - ({_minutes} * 60)
+
+        send "&8&m---------------------------------------------"
+        send "&6&lPLAYTIME"
+        send "&7Player: &e&l%name of {_target}%"
+        send "&7---------------------------------------------"
+        send "&ePlaytime: &f%time played of {_target}%"
+        send "&8&m---------------------------------------------"

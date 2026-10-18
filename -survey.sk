@@ -1,0 +1,9 @@
+options:
+	prefix: &8[&dImportant Survey&8]
+	SoundD: BLOCK_NOTE_BLOCK_PLING
+	SoundD-Volume: 1
+	SoundD-Pitch: 1
+
+on join:
+	send "{@prefix} &7If you have not already, please fill out this survey. &bSurvey link: https://forms.gle/roiEvMosNZAzgbyM7" to player
+	play sound "{@SoundD}" with volume {@SoundD-Volume} and pitch {@SoundD-Pitch}

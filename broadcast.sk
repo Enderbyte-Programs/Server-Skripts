@@ -1,0 +1,9 @@
+command /broadcast <text>:
+    permission: script.broadcast
+    permission message: "&cYou do not have permission to use this command."
+    trigger:
+        loop all players:
+            send title "&c&lBROADCAST" with subtitle "&fCheck chat for the broadcast" to loop-player for 2 seconds
+            play sound "block.note_block.pling" with volume 1 and pitch 1 to loop-player
+
+        broadcast "<#FF0000>Broadcast >> <#FFFFFF>%arg-1%"

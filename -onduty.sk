@@ -1,0 +1,19 @@
+command /offduty:
+    permission: unihome.admin
+    trigger:
+        make server execute command "lp user %player% permission set group.offduty true"
+        send "Now &c&lOFF &rduty" to player
+        send title "&c&lOFF DUTY" with subtitle "&7You are currently off duty" to player for 3 seconds
+
+command /onduty:
+    permission: unihome.admin
+    trigger:
+        make server execute command "lp user %player% permission set group.offduty false"
+        send "Now &2&lON &rduty" to player
+        send title "&2&lON DUTY" with subtitle "&7You are now on duty" to player for 2 seconds
+
+every 5 minutes:
+    loop all players:
+        if loop-player has permission "unihome.admin":
+            if loop-player has permission "group.offduty":
+                send title "&c&lOFF DUTY" with subtitle "&7You are currently off duty" to loop-player for 5 seconds

@@ -1,0 +1,170 @@
+on load:
+    set {antigrief.version} to "1.2.6"
+
+    if {antigrief.enabled} is not set:
+        set {antigrief.enabled} to true
+        
+    # Initialize the config variable if it doesn't exist
+    if {antigrief.world} is not set:
+        set {antigrief.world} to "events"
+
+# TAB COMPLETION USING SKBEE
+on tab complete:
+    if event-string starts with "/antigrief":
+        if player has permission "op":
+
+            # First argument
+            if tab arg-1 is not set:
+                set tab completions to "version", "reload", "toggle", "stats", and "config"
+
+            # Second argument
+            else if tab arg-1 is "stats":
+                if tab arg-2 is not set:
+                    set tab completions to all players
+            
+            else if tab arg-1 is "config":
+                if tab arg-2 is not set:
+                    set tab completions to all worlds
+
+# COMMAND SYSTEM
+command /antigrief [<text>] [<text>]:
+    permission: op
+    trigger:
+
+        # VERSION
+        if arg-1 is "version":
+            send "&7AntiGrief Version: &a%{antigrief.version}%" to player
+            stop
+
+        # VER
+        if arg-1 is "ver":
+            send "&7AntiGrief Version: &a%{antigrief.version}%" to player
+            stop
+
+        # RELOAD
+        if arg-1 is "reload":
+            reload script name of script
+            send "&aAntiGrief reloaded!" to player
+            stop
+
+        # TOGGLE
+        if arg-1 is "toggle":
+            if {antigrief.enabled} is true:
+                set {antigrief.enabled} to false
+                send "&cAntiGrief Disabled" to player
+            else:
+                set {antigrief.enabled} to true
+                send "&aAntiGrief Enabled" to player
+            stop
+            
+        # CONFIG WORLD
+        if arg-1 is "config":
+            if arg-2 is not set:
+                send "&cUsage: /antigrief config <worldname>" to player
+                stop
+            set {antigrief.world} to arg-2
+            send "&aAntiGrief world set to: &e%{antigrief.world}%" to player
+            stop
+
+        # STATS
+        if arg-1 is "stats":
+            
+            # Logic to handle both self and others
+            set {_target} to arg-2 parsed as offline player
+            if {_target} is not set:
+                set {_target} to player
+            
+            set {_attempts} to {antigrief.attempts::%uuid of {_target}%} ? 0
+            set {_total} to {antigrief.total::%uuid of {_target}%} ? 0
+
+            send "&8&m---------------------"
+            send "&7%{_target}%'s AntiGrief Stats:"
+            send "&7Current Attempts: &c%{_attempts}%/10"
+            send "&7Total Attempts: &e%{_total}%"
+            send "&8&m---------------------"
+            stop
+
+        # DEFAULT GUI
+        open chest inventory with 1 row named "&8Anti-Grief Control" to player
+        wait 1 tick
+
+        if {antigrief.enabled} is true:
+            set slot 4 of player's current inventory to lime wool named "&aEnabled" with lore "&7Click to disable"
+        else:
+            set slot 4 of player's current inventory to red wool named "&cDisabled" with lore "&7Click to enable"
+
+# GUI CLICK HANDLER
+on inventory click:
+    if name of event-inventory is "&8Anti-Grief Control":
+        cancel event
+
+        if clicked slot is 4:
+            if {antigrief.enabled} is true:
+                set {antigrief.enabled} to false
+                send "&cAnti-Grief Disabled" to player
+            else:
+                set {antigrief.enabled} to true
+                send "&aAnti-Grief Enabled" to player
+
+            close player's inventory
+
+# INVENTORY REMOVER
+every 10 ticks:
+    if {antigrief.enabled} is true:
+        loop all players:
+            set {_p} to loop-player
+
+            # Now checking against the config variable instead of hardcoded text
+            if world of {_p} is {antigrief.world}:
+                if {_p} is not op:
+
+                    set {_removed} to false
+
+                    # Item Removal Logic
+                    if {_p} has tnt:
+                        remove all tnt from {_p}
+                        set {_removed} to true
+
+                    loop all items in {_p}'s inventory:
+                        if loop-item is end crystal:
+                            remove loop-item from {_p}'s inventory
+                            set {_removed} to true
+
+                    if {_p} has structure block:
+                        remove all structure block from {_p}
+                        set {_removed} to true
+
+                    if {_p} has command block:
+                        remove all command block from {_p}
+                        set {_removed} to true
+
+                    if {_p} has repeating command block:
+                        remove all repeating command block from {_p}
+                        set {_removed} to true
+
+                    if {_p} has chain command block:
+                        remove all chain command block from {_p}
+                        set {_removed} to true
+
+                    if {_p} has barrier:
+                        remove all barrier from {_p}
+                        set {_removed} to true
+
+                    if {_p} has debug stick:
+                        remove all debug stick from {_p}
+                        set {_removed} to true
+
+                    # ATTEMPTS SYSTEM
+                    if {_removed} is true:
+                        add 1 to {antigrief.attempts::%uuid of {_p}%}
+                        add 1 to {antigrief.total::%uuid of {_p}%}
+
+                        send "&c? Restricted items removed! (&7%{antigrief.attempts::%uuid of {_p}%}%/10&c)" to {_p}
+
+                        if {antigrief.attempts::%uuid of {_p}%} >= 10:
+                            execute console command "kick %{_p}% 10+ Restricted items request - AntiGrief"
+                            delete {antigrief.attempts::%uuid of {_p}%}
+
+# RESET CURRENT ATTEMPTS (KEEP TOTAL)
+on quit:
+    delete {antigrief.attempts::%uuid of player%}

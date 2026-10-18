@@ -1,0 +1,22 @@
+variables:
+	{busy} = 0
+
+command /creativeworld:
+	permission: skript.creative
+	description: Go to the creative world
+	executable by: players
+	trigger:
+		execute player command "/mvtp old_server"
+
+
+on player teleport:
+	wait 5 seconds
+	if {busy} is 0:
+		if player is in world "old_server":
+			if player does not have permission "skript.creative":
+				
+				execute player command "/mvtp lobby"
+				set {busy} to 1
+				send "You're not supposed to be here, so you were teleported to the lobby" to player
+				wait 5 seconds
+				set {busy} to 0

@@ -1,0 +1,12 @@
+options:
+	prefix: &8[&dReport Link&8]
+	SoundD: BLOCK_NOTE_BLOCK_PLING
+	SoundD-Volume: 1
+	SoundD-Pitch: 1
+
+command /report:
+	aliases: /support
+	trigger:
+		send "{@prefix} &7Report issues, griefs, or thefts here: &fhttps://enderbyteprograms.net/minecraft/support/&r" to player
+		send "{@prefix} &7Alternatively, you may report issues on &9&lDiscord.&r"
+		play sound "{@SoundD}" with volume {@SoundD-Volume} and pitch {@SoundD-Pitch}
